@@ -44,7 +44,7 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   // modules: ['nuxt-buefy', '@nuxt/content'],
-  modules: ['nuxt-buefy', '@nuxt/content'],
+  modules: ['@nuxt/content'],
 
   content: {},
 
