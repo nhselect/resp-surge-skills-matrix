@@ -4,7 +4,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'LTLC Equipment Matrix',
+    title: 'LTLC Respiratory Surge in Children Skills Matrix',
     htmlAttrs: {
       lang: 'en',
     },
