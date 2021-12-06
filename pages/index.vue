@@ -27,7 +27,7 @@
     </header>
     <div class="nhsuk-width-container-fluid">
       <main id="maincontent" class="nhsuk-main-wrapper" role="main">
-        <h1>Respiratory Surge in Children <small>Skills Matrix</small></h1>
+        <h1>Respiratory Surge in Children <small>Searchable Index</small></h1>
         <p class="nhsuk__lead">
           Use the search bar or the drop down boxes below to find specific
           resources.
