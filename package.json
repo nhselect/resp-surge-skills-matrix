@@ -1,6 +1,6 @@
 {
-  "name": "ltlc-resp-surge-matrix",
-  "version": "1.0.0",
+  "name": "ltlc-resp-searchable-index",
+  "version": "1.1.0",
   "author": "LTLC@hee.nhs.uk",
   "private": true,
   "scripts": {

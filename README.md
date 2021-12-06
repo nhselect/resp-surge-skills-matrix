@@ -1,4 +1,4 @@
-# resp-surge-skills-matrix
+# resp-surge-searchable-index
 
 ## Build Setup
 

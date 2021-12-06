@@ -4,7 +4,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'LTLC Respiratory Surge in Children Skills Matrix',
+    title: 'LTLC Respiratory Surge in Children Searchable Index',
     htmlAttrs: {
       lang: 'en',
     },
@@ -55,10 +55,10 @@ export default {
     meta: {
       mobileAppIOS: true,
       appleStatusBarStyle: 'black-translucent',
-      name: 'LTLCRespSurgeSkillsMatrix',
+      name: 'LTLCRespSurgeSearchableIndex',
     },
     manifest: {
-      name: 'LTLC Respiratory Surge in Children Skills Matrix',
+      name: 'LTLC Respiratory Surge in Children Searchable Index',
     },
   },
 
