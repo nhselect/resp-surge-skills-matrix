@@ -16,6 +16,25 @@
         </strong>
       </p>
     </div>
+    <div class="nhsuk-form-group" label="Staff Group">
+      <label class="nhsuk-label" for="staff">Staff Group</label>
+      <select
+        id="staff"
+        v-model="staff"
+        placeholder="Staff Group"
+        class="nhsuk-select nhsuk-u-width-full"
+      >
+        <option></option>
+        <option
+          v-for="staff in getStaff()"
+          :key="staff"
+          :label="staff"
+          :value="staff"
+        >
+          {{ staff }}
+        </option>
+      </select>
+    </div>
     <div class="nhsuk-form-group" label="Duration">
       <label class="nhsuk-label" for="duration">
         Maximum Duration (minutes)
@@ -33,7 +52,9 @@
         <legend class="nhsuk-fieldset__legend">
           <p class="nhsuk-fieldset__heading">Format</p>
         </legend>
-        <div class="nhsuk-checkboxes">
+        <div
+          class="nhsuk-checkboxes nhsuk-checkboxes--small ltlc-filter__formats"
+        >
           <div
             v-for="item in getFormats()"
             :key="item"
@@ -72,20 +93,19 @@ export default class Picker extends Vue {
   searchQuery = ''
   duration = 0
   results = 0
-  formats: String[] = [
-    'Audio',
-    'Video',
-    'Infographic',
-    'Interactive',
-    'Slides',
-    'Text',
-    'Website',
-  ]
+  formats = this.getFormats()
+  staff = ''
 
   getFormats() {
-    return [
-      ...new Set(this.resources.map((resource) => resource.format)),
-    ].sort()
+    return [...new Set(this.resources.map((resource) => resource.format))]
+      .filter((a) => a)
+      .sort()
+  }
+
+  getStaff() {
+    return [...new Set(this.resources.flatMap((resource) => resource.staff))]
+      .filter((a) => a)
+      .sort()
   }
 
   getLinks() {
@@ -95,6 +115,12 @@ export default class Picker extends Vue {
         .split(' ')
         .every((v) => resource.search.toLowerCase().includes(v))
     })
+
+    if (this.staff !== '') {
+      resource = resource.filter((resource) => {
+        return resource.staff.includes(this.staff)
+      })
+    }
 
     if (this.duration > 0) {
       resource = resource.filter((resource) => {
@@ -125,15 +151,8 @@ export default class Picker extends Vue {
   // clear all filters
   clearFilters() {
     this.searchQuery = ''
-    this.formats = [
-      'Audio',
-      'Video',
-      'Infographic',
-      'Interactive',
-      'Slides',
-      'Text',
-      'Website',
-    ]
+    this.staff = ''
+    this.formats = this.getFormats()
     this.duration = 0
     this.results = 0
   }
@@ -144,6 +163,16 @@ export default class Picker extends Vue {
     this.results = 0
 
     if (this.searchQuery !== '') {
+      this.$emit('changeModel', this.getLinks())
+    }
+  }
+
+  @Watch('staff')
+  onStaffChanged() {
+    this.$emit('clear')
+    this.results = 0
+
+    if (this.staff !== '') {
       this.$emit('changeModel', this.getLinks())
     }
   }
@@ -162,8 +191,6 @@ export default class Picker extends Vue {
   onFormatChanged() {
     this.$emit('clear')
 
-    this.searchQuery = ''
-
     this.$emit('changeModel', this.getLinks())
   }
 }
@@ -176,4 +203,14 @@ export default class Picker extends Vue {
 @import 'node_modules/nhsuk-frontend/packages/components/input/input';
 @import 'node_modules/nhsuk-frontend/packages/components/tag/tag';
 @import 'node_modules/nhsuk-frontend/packages/components/checkboxes/checkboxes';
+@import 'assets/scss/small-checkboxes';
+
+.nhsuk-checkboxes.ltlc-filter__formats {
+  display: flex;
+  flex-wrap: wrap;
+
+  .nhsuk-checkboxes__item {
+    margin-right: 20px;
+  }
+}
 </style>

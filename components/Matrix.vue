@@ -62,7 +62,7 @@ export default class Matrix extends Vue {
       return { ...item, search }
     })
 
-    this.links = this.resources
+    // this.links = this.resources
   }
 }
 </script>

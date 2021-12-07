@@ -23,7 +23,9 @@
               v-if="resource.mapped_skills.length > 0"
               class="ltlc-objectives"
             >
-              <p>This resource meets the following learning objectives:</p>
+              <p>
+                This resource is mapped to the following learning objectives:
+              </p>
               <ul class="">
                 <li
                   v-for="objective in resource.mapped_skills"
@@ -42,6 +44,15 @@
                 class="nhsuk-tag nhsuk-tag--blue"
               >
                 {{ keyword }}
+              </li>
+            </ul>
+            <ul class="ltlc-staff">
+              <li
+                v-for="s in resource.staff"
+                :key="s"
+                class="nhsuk-tag nhsuk-tag--green"
+              >
+                {{ s }}
               </li>
             </ul>
           </div>

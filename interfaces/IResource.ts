@@ -10,7 +10,7 @@ export interface IResource {
   keywords: string[]
   domain: string
   care_level: string
-  staff_groups: string[]
+  staff: string[]
   mapped_skills: IObjective[]
   url: string
   uploadDate: Date
