@@ -19,31 +19,40 @@
             >
               {{ resource.description | trimDescription }}
             </p>
-            <div
+            <details
               v-if="resource.mapped_skills.length > 0"
-              class="ltlc-objectives"
+              class="nhsuk-details ltlc-objectives nhsuk-body-s"
             >
-              <p>
-                This resource is mapped to the following learning objectives:
-              </p>
-              <ul class="">
-                <li
-                  v-for="objective in resource.mapped_skills"
-                  :key="objective.id"
-                  class="nhsuk-list ltlc-objective__item"
-                >
-                  <strong>{{ objective.value }}</strong>
-                  {{ objective.objective }}
-                </li>
-              </ul>
-            </div>
+              <summary class="nhsuk-details__summary">
+                <span class="nhsuk-details__summary-text">
+                  This resource is mapped to
+                  {{ resource.mapped_skills.length }} learning objective{{
+                    resource.mapped_skills.length > 1 ? 's' : ''
+                  }}
+                </span>
+              </summary>
+              <div class="nhsuk-details__text">
+                <ul class="nhsuk-list">
+                  <li
+                    v-for="objective in resource.mapped_skills"
+                    :key="objective.id"
+                    class="nhsuk-list ltlc-objective__item"
+                  >
+                    <strong>{{ objective.value }}</strong>
+                    {{ objective.objective }}
+                  </li>
+                </ul>
+              </div>
+            </details>
             <ul class="ltlc-keywords">
               <li
                 v-for="keyword in resource.keywords"
                 :key="keyword"
                 class="nhsuk-tag nhsuk-tag--blue"
               >
-                {{ keyword }}
+                <a href="#" @click="addKeywordToFilter(keyword)">
+                  {{ keyword }}
+                </a>
               </li>
             </ul>
             <ul class="ltlc-staff">
@@ -146,11 +155,15 @@ Vue.component('FontAwesome', FontAwesomeIcon)
 @Component
 export default class Resources extends Vue {
   @Prop({ required: true }) readonly links!: IResource[]
+
+  addKeywordToFilter(keyword: string) {
+    this.$root.$emit('addKeywordToFilter', keyword)
+  }
 }
 
 Vue.filter('trimDescription', (desc: string) => {
   if (desc != null && desc.length > 0) {
-    return desc.substring(0, 150).trim() + (desc.length > 150 ? '...' : '')
+    return desc.substring(0, 350).trim() + (desc.length > 350 ? '...' : '')
   }
   return ''
 })
@@ -160,6 +173,7 @@ Vue.filter('trimDescription', (desc: string) => {
 @import 'node_modules/nhsuk-frontend/packages/components/button/button';
 @import 'node_modules/nhsuk-frontend/packages/components/card/card';
 @import 'node_modules/nhsuk-frontend/packages/components/tag/tag';
+@import 'node_modules/nhsuk-frontend/packages/components/details/details';
 
 h3.nhsuk-heading-s {
   margin-bottom: 8px;
@@ -177,12 +191,6 @@ h3.nhsuk-heading-s {
   border-bottom: 10px solid $color_nhsuk-pink;
 }
 
-.nhsuk-tag {
-  margin-right: 2px;
-  margin-bottom: 0;
-  font-size: 0.75em;
-}
-
 .ltlc-keywords {
   text-align: right;
 }
@@ -190,6 +198,11 @@ h3.nhsuk-heading-s {
 .ltlc-card__content {
   display: flex;
   justify-content: space-between;
+
+  .nhsuk-tag {
+    margin-bottom: 0;
+    font-size: 0.75em;
+  }
 }
 
 .nhsuk-card__content-frame {

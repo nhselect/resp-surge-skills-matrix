@@ -4,7 +4,7 @@
       <label class="nhsuk-label" for="search">What are you looking for?</label>
       <input
         id="search"
-        v-model="searchQuery"
+        v-model="indexFilter.text"
         class="nhsuk-input nhsuk-u-width-full"
         name="Search"
         type="text"
@@ -20,7 +20,7 @@
       <label class="nhsuk-label" for="staff">Staff Group</label>
       <select
         id="staff"
-        v-model="staff"
+        v-model="indexFilter.staff"
         placeholder="Staff Group"
         class="nhsuk-select nhsuk-u-width-full"
       >
@@ -41,11 +41,20 @@
       </label>
       <input
         id="duration"
-        v-model="duration"
+        v-model="indexFilter.duration"
         class="nhsuk-input nhsuk-u-width-one-quarter"
         name="duration"
         type="number"
       />
+      <span
+        v-for="d in durationPresets"
+        :key="d"
+        class="nhsuk-tag nhsuk-tag--grey"
+      >
+        <a href="#" @click="setDuration(d)">
+          {{ d > 0 ? d : 'None' }}
+        </a>
+      </span>
     </div>
     <div class="nhsuk-form-group" label="Resource Type">
       <fieldset class="nhsuk-fieldset">
@@ -61,7 +70,7 @@
             class="nhsuk-checkboxes__item"
           >
             <input
-              v-model="formats"
+              v-model="indexFilter.formats"
               class="nhsuk-checkboxes__input"
               type="checkbox"
               :label="item"
@@ -84,17 +93,45 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'nuxt-property-decorator'
-import { IResource } from '~/interfaces'
+import { IResource, IFilter } from '~/interfaces'
 
 @Component
 export default class Picker extends Vue {
   @Prop({ required: true }) readonly resources!: IResource[]
-  search = ''
-  searchQuery = ''
-  duration = 0
   results = 0
-  formats = this.getFormats()
-  staff = ''
+  status = ''
+
+  indexFilter: IFilter = {
+    text: '',
+    duration: 0,
+    formats: this.getFormats(),
+    staff: '',
+  }
+
+  searchWeighting = {
+    title: 10,
+    keyword: 5,
+    description: 1,
+    objective: 1,
+  }
+
+  durationPresets = [5, 15, 30, 0]
+
+  setDuration(d: number) {
+    this.indexFilter.duration = d
+  }
+
+  mounted() {
+    this.$root.$on('addKeywordToFilter', (keyword: string) => {
+      if (
+        !this.indexFilter.text.toLowerCase().includes(keyword.toLowerCase())
+      ) {
+        this.indexFilter.text = [this.indexFilter.text, keyword]
+          .join(' ')
+          .trim()
+      }
+    })
+  }
 
   getFormats() {
     return [...new Set(this.resources.map((resource) => resource.format))]
@@ -108,31 +145,74 @@ export default class Picker extends Vue {
       .sort()
   }
 
+  textToArray(text: string) {
+    return text.toLowerCase().split(' ')
+  }
+
   getLinks() {
-    let resource = this.resources.filter((resource) => {
-      return this.searchQuery
-        .toLowerCase()
-        .split(' ')
-        .every((v) => resource.search.toLowerCase().includes(v))
-    })
+    const ranked = this.resources
+      .map((r) => {
+        let points = 0
+        const textArr = this.indexFilter.text.toLowerCase().split(' ')
 
-    if (this.staff !== '') {
+        const wordsMatched = r.title
+          .toLowerCase()
+          .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+          .split(' ')
+          .filter((w) => {
+            return textArr.includes(w)
+          }).length
+
+        points += wordsMatched * this.searchWeighting.title
+
+        const keywordsMatched = r.keywords
+          .join(' ')
+          .toLowerCase()
+          .split(' ')
+          .filter((w) => {
+            return textArr.includes(w)
+          }).length
+
+        points += keywordsMatched * this.searchWeighting.keyword
+
+        const partialMatched = r.search
+          .toLowerCase()
+          .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+          .split(' ')
+          .filter((w) => {
+            return textArr.every((v) => w.includes(v))
+          }).length
+
+        points += partialMatched * this.searchWeighting.description
+
+        return { ...r, points }
+      })
+      .filter((resource) => {
+        return resource.points > 0
+      })
+      .sort((a, b) => b.points - a.points)
+
+    let resource = ranked
+
+    if (this.indexFilter.staff !== '') {
       resource = resource.filter((resource) => {
-        return resource.staff.includes(this.staff)
+        return resource.staff.includes(this.indexFilter.staff)
       })
     }
 
-    if (this.duration > 0) {
+    if (this.indexFilter.duration > 0) {
       resource = resource.filter((resource) => {
-        return resource.duration <= this.duration
+        return resource.duration <= this.indexFilter.duration
       })
     }
 
-    if (this.formats.length > 0) {
+    if (this.indexFilter.formats.length > 0) {
       resource = resource.filter((resource) => {
-        return this.formats.includes(resource.format)
+        return this.indexFilter.formats.includes(resource.format)
       })
     }
+
+    this.$emit('changeFilterDescription', this.changeFilterDescription())
 
     if (resource && resource.length > 0) {
       this.results = resource.length
@@ -148,49 +228,65 @@ export default class Picker extends Vue {
     return this.resources
   }
 
+  getFilter() {
+    const currentFilter = this.indexFilter
+    return currentFilter
+  }
+
   // clear all filters
   clearFilters() {
-    this.searchQuery = ''
-    this.staff = ''
-    this.formats = this.getFormats()
-    this.duration = 0
+    this.indexFilter = {
+      text: '',
+      duration: 0,
+      formats: this.getFormats(),
+      staff: '',
+    }
     this.results = 0
   }
 
-  @Watch('searchQuery')
+  changeFilterDescription() {
+    let desc = ''
+    if (this.indexFilter.text !== '') {
+      desc += ', searching for ' + this.indexFilter.text
+    }
+    if (this.indexFilter.duration > 0) {
+      desc +=
+        ' with a maximum time of ' +
+        this.indexFilter.duration.toString() +
+        ' minutes'
+    }
+    if (this.indexFilter.staff !== '') {
+      desc += ', appropriate for the ' + this.indexFilter.staff + ' staff group'
+    }
+
+    return desc
+  }
+
+  @Watch('indexFilter.text')
   onSearchChanged() {
     this.$emit('clear')
     this.results = 0
-
-    if (this.searchQuery !== '') {
-      this.$emit('changeModel', this.getLinks())
-    }
+    this.$emit('changeModel', this.getLinks())
   }
 
-  @Watch('staff')
+  @Watch('indexFilter.staff')
   onStaffChanged() {
     this.$emit('clear')
     this.results = 0
-
-    if (this.staff !== '') {
-      this.$emit('changeModel', this.getLinks())
-    }
+    this.$emit('changeModel', this.getLinks())
   }
 
-  @Watch('duration')
+  @Watch('indexFilter.duration')
   onDurationChanged() {
     this.$emit('clear')
     this.results = 0
-
-    if (this.duration > 0) {
-      this.$emit('changeModel', this.getLinks())
-    }
+    this.$emit('changeModel', this.getLinks())
   }
 
-  @Watch('formats')
+  @Watch('indexFilter.formats')
   onFormatChanged() {
     this.$emit('clear')
-
+    this.results = 0
     this.$emit('changeModel', this.getLinks())
   }
 }
@@ -212,5 +308,9 @@ export default class Picker extends Vue {
   .nhsuk-checkboxes__item {
     margin-right: 20px;
   }
+}
+
+.nhsuk-tag {
+  margin-right: 2px;
 }
 </style>

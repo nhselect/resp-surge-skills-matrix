@@ -32,6 +32,7 @@ export default {
     // https://go.nuxtjs.dev/stylelint
     '@nuxtjs/stylelint-module',
     '@nuxtjs/style-resources',
+    '@nuxtjs/localforage',
     '@nuxtjs/pwa',
   ],
 
