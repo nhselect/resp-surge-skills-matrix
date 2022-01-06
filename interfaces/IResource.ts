@@ -1,7 +1,7 @@
 import { IObjective } from './index'
 
 export interface IResource {
-  id: string
+  id: number
   title: string
   description: string
   format: string
