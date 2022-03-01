@@ -112,6 +112,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'nuxt-property-decorator'
+// import { mapMutations } from 'vuex'
 import { IResource, IFilter } from '~/interfaces'
 
 @Component
@@ -123,9 +124,21 @@ export default class Picker extends Vue {
   indexFilter: IFilter = {
     text: '',
     duration: 0,
-    formats: this.getFormats(),
+    formats: [],
     caresetting: '',
     staff: '',
+  }
+
+  clearedFilter: IFilter = {
+    text: '',
+    duration: 0,
+    formats: [],
+    caresetting: '',
+    staff: '',
+  }
+
+  computed() {
+    // to do
   }
 
   searchWeighting = {
@@ -135,13 +148,47 @@ export default class Picker extends Vue {
     objective: 1,
   }
 
+  urlFilter = ''
+
   durationPresets = [5, 15, 30, 0]
 
   setDuration(d: number) {
     this.indexFilter.duration = d
   }
 
+  // encode the filter object in URL safe base64
+  encodeFilter(filter: IFilter) {
+    const filterString = JSON.stringify(filter)
+    return encodeURIComponent(filterString)
+  }
+
+  // decode filter from URL param
+  decodeFilter(filterString: string) {
+    const filter = decodeURIComponent(filterString)
+    const filterObject = JSON.parse(filter) as IFilter
+    return filterObject
+  }
+
+  /* set the filter param on the url
+  setFilterUrl(filter: IFilter) {
+    const encodedFilter = this.encodeFilter(filter)
+    const url = window.location.href.split('?')[0]
+    history.replaceState({}, '', url + '?filter=' + encodedFilter)
+  } */
+
   mounted() {
+    let urlFilter = this.$route.query.filter || ''
+
+    if (Array.isArray(urlFilter)) {
+      urlFilter = urlFilter[0] || ''
+    }
+
+    if (urlFilter !== '') {
+      const filter = this.decodeFilter(urlFilter)
+
+      this.indexFilter = filter
+    }
+
     this.$root.$on('addKeywordToFilter', (keyword: string) => {
       if (
         !this.indexFilter.text.toLowerCase().includes(keyword.toLowerCase())
@@ -248,6 +295,8 @@ export default class Picker extends Vue {
 
     this.$emit('changeFilterDescription', this.changeFilterDescription())
 
+    this.setFilterUrl(this.indexFilter)
+
     if (resource && resource.length > 0) {
       this.results = resource.length
       return resource
@@ -272,7 +321,7 @@ export default class Picker extends Vue {
     this.indexFilter = {
       text: '',
       duration: 0,
-      formats: this.getFormats(),
+      formats: [],
       caresetting: '',
       staff: '',
     }

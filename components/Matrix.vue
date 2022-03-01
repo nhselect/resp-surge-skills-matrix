@@ -53,7 +53,7 @@ export default class Matrix extends Vue {
   indexFilter: IFilter = {
     text: '',
     duration: 0,
-    formats: [''],
+    formats: [],
     caresetting: '',
     staff: '',
   }
