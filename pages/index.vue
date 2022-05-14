@@ -32,6 +32,18 @@
           Use the search bar or the drop down boxes below to find specific
           resources.
         </p>
+        <p>
+          <strong>
+            Access the new
+            <a
+              href="https://www.e-lfh.org.uk/programmes/respiratory_surge_in_children/#PaediatricDigitalSkillsPasspor"
+              target="_blank"
+            >
+              Paediatric Digital Skills Passports
+            </a>
+            , endorsed by the Paediatric Critical Care Society (PCCS)
+          </strong>
+        </p>
         <Matrix />
         <div class="links">
           <h2>Can't find what you are looking for?</h2>
