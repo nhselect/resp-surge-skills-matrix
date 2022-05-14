@@ -19,6 +19,18 @@
             >
               {{ resource.description | trimDescription }}
             </p>
+            <ul class="ltlc-keywords">
+              <li
+                v-for="keyword in resource.keywords"
+                :key="keyword"
+                class="nhsuk-tag nhsuk-tag--clear"
+              >
+                <a href="#" @click="addKeywordToFilter(keyword)">
+                  {{ keyword }}
+                </a>
+              </li>
+            </ul>
+            <!--
             <details
               v-if="resource.mapped_skills.length > 0"
               class="nhsuk-details ltlc-objectives nhsuk-body-s"
@@ -44,17 +56,7 @@
                 </ul>
               </div>
             </details>
-            <ul class="ltlc-keywords">
-              <li
-                v-for="keyword in resource.keywords"
-                :key="keyword"
-                class="nhsuk-tag nhsuk-tag--blue"
-              >
-                <a href="#" @click="addKeywordToFilter(keyword)">
-                  {{ keyword }}
-                </a>
-              </li>
-            </ul>
+            -->
             <ul class="ltlc-staff">
               <li
                 v-for="s in resource.staff"
@@ -192,7 +194,13 @@ h3.nhsuk-heading-s {
 }
 
 .ltlc-keywords {
-  text-align: right;
+  text-align: left;
+  padding-left: 0;
+
+  li {
+    padding: 0;
+    margin-right: nhsuk-spacing(2);
+  }
 }
 
 .ltlc-card__content {
@@ -202,6 +210,11 @@ h3.nhsuk-heading-s {
   .nhsuk-tag {
     margin-bottom: 0;
     font-size: 0.75em;
+
+    &.nhsuk-tag--clear {
+      background: none;
+      border: none;
+    }
   }
 }
 

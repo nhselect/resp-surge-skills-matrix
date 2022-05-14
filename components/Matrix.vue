@@ -54,6 +54,7 @@ export default class Matrix extends Vue {
     text: '',
     duration: 0,
     formats: [''],
+    caresetting: '',
     staff: '',
   }
 

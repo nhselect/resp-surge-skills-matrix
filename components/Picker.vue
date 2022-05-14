@@ -35,6 +35,25 @@
         </option>
       </select>
     </div>
+    <div class="nhsuk-form-group" label="Care Setting">
+      <label class="nhsuk-label" for="staff">Care Setting</label>
+      <select
+        id="staff"
+        v-model="indexFilter.caresetting"
+        placeholder="Care Setting"
+        class="nhsuk-select nhsuk-u-width-full"
+      >
+        <option></option>
+        <option
+          v-for="caresetting in getCareSettings()"
+          :key="caresetting"
+          :label="caresetting"
+          :value="caresetting"
+        >
+          {{ caresetting }}
+        </option>
+      </select>
+    </div>
     <div class="nhsuk-form-group" label="Duration">
       <label class="nhsuk-label" for="duration">
         Maximum Duration (minutes)
@@ -105,6 +124,7 @@ export default class Picker extends Vue {
     text: '',
     duration: 0,
     formats: this.getFormats(),
+    caresetting: '',
     staff: '',
   }
 
@@ -141,6 +161,14 @@ export default class Picker extends Vue {
 
   getStaff() {
     return [...new Set(this.resources.flatMap((resource) => resource.staff))]
+      .filter((a) => a)
+      .sort()
+  }
+
+  getCareSettings() {
+    return [
+      ...new Set(this.resources.flatMap((resource) => resource.care_level)),
+    ]
       .filter((a) => a)
       .sort()
   }
@@ -206,6 +234,12 @@ export default class Picker extends Vue {
       })
     }
 
+    if (this.indexFilter.caresetting.length > 0) {
+      resource = resource.filter((resource) => {
+        return this.indexFilter.caresetting.includes(resource.care_level)
+      })
+    }
+
     if (this.indexFilter.formats.length > 0) {
       resource = resource.filter((resource) => {
         return this.indexFilter.formats.includes(resource.format)
@@ -239,6 +273,7 @@ export default class Picker extends Vue {
       text: '',
       duration: 0,
       formats: this.getFormats(),
+      caresetting: '',
       staff: '',
     }
     this.results = 0
@@ -255,8 +290,15 @@ export default class Picker extends Vue {
         this.indexFilter.duration.toString() +
         ' minutes'
     }
-    if (this.indexFilter.staff !== '') {
-      desc += ', appropriate for the ' + this.indexFilter.staff + ' staff group'
+    if (this.indexFilter.staff !== '' || this.indexFilter.caresetting !== '') {
+      desc += ', appropriate for '
+      if (this.indexFilter.staff !== '') {
+        desc += this.indexFilter.staff + ' '
+      }
+      desc += 'staff'
+      if (this.indexFilter.caresetting !== '') {
+        desc += ' working within ' + this.indexFilter.caresetting
+      }
     }
 
     return desc
@@ -278,6 +320,13 @@ export default class Picker extends Vue {
 
   @Watch('indexFilter.duration')
   onDurationChanged() {
+    this.$emit('clear')
+    this.results = 0
+    this.$emit('changeModel', this.getLinks())
+  }
+
+  @Watch('indexFilter.caresetting')
+  onCareSettingChanged() {
     this.$emit('clear')
     this.results = 0
     this.$emit('changeModel', this.getLinks())
