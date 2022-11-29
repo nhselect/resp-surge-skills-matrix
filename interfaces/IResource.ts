@@ -12,8 +12,11 @@ export interface IResource {
   care_level: string
   staff: string[]
   mapped_skills: IObjective[]
+  attribution: string
+  folder: string
   url: string
-  uploadDate: Date
+  upload_date: Date
   slug: string
   search: string
+  selected: boolean
 }

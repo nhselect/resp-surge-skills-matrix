@@ -1,10 +1,57 @@
 <template>
   <div>
-    <Nuxt />
+    <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
+    <NhsHeader />
+    <div class="nhsuk-width-container-fluid">
+      <main id="maincontent" class="nhsuk-main-wrapper" role="main">
+        <Nuxt />
+        <div class="email-contact">
+          <h2>Can't find what you are looking for?</h2>
+          <p>
+            Please email
+            <a href="mailto:learningnetwork@nhselect.org.uk"
+              >learningnetwork@nhselect.org.uk</a
+            >
+            stating what you need and we will do our best to locate some
+            suitable resources.
+          </p>
+        </div>
+        <div class="install-instructions">
+          <h2>Install on your phone</h2>
+          <p>
+            You can install this as an app on your phone by accessing your
+            browser settings/share settings and selecting
+            <strong>Add to Home Screen</strong>
+            (please note: steps vary between devices and browsers)
+          </p>
+        </div>
+        <div class="programme-list">
+          <Programmes />
+        </div>
+      </main>
+    </div>
+    <NhsFooter />
   </div>
 </template>
 
-<style>
+<script>
+import Programmes from '~/components/Programmes.vue'
+import NhsFooter from '~/components/NhsFooter.vue'
+import NhsHeader from '~/components/NhsHeader.vue'
+
+export default {
+  components: {
+    Programmes,
+    NhsFooter,
+    NhsHeader,
+  },
+}
+</script>
+
+<style lang="scss">
+@import 'node_modules/nhsuk-frontend/packages/components/skip-link/skip-link';
+@import 'node_modules/nhsuk-frontend/packages/components/action-link/action-link';
+
 html {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
