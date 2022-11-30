@@ -1,0 +1,137 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+
+site_url: https://respsurge.thelearningcollaborative.co.uk
+display_url: https://respsurge.thelearningcollaborative.co.uk
+
+media_folder: static/img
+public_folder: /img
+
+collections:
+  - name: "datasets"
+    label: "Datasets"
+    format: "json"
+    extension: "json"
+    editor:
+      preview: false
+    hide: true
+    delete: false
+    files:
+      - label: "Resource List"
+        name: "resources"
+        file: "content/resources.json"
+        sortable_fields: ["slug","title"]
+        fields:
+          - name: items
+            label: "Items"
+            widget: list
+            fields:
+              - {label: "LEN ID", name: "id", widget: "number", value_type: "int"}
+              - {label: "Slug", name: "slug", widget: "string"}
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Description", name: "description", widget: "string"}
+              - {label: "Format", name: "format", widget: "string"}
+              # - {label: "Content", name: "content", widget: "string"}
+              - {label: "Upload Date", name: "upload_date", widget: "string"}
+              - {label: "URL", name: "url", widget: "string"}
+              # - {label: "Keywords", name: "keywords", widget: "list"}
+              - {label: "Duration", name: "duration", widget: "number", value_type: "int"}
+              # - {label: "Slug", name: "slug", widget: "string"}
+              # - {label: "Folder", name: "folder", widget: "string"}
+              # - {label: "Attribution", name: "attribution", widget: "string"}
+              # - {label: "Starred Resource?", name: "starred", widget: "boolean"}
+              # - {label: "Easy Read?", name: "easy_read", widget: "boolean"}
+              # - {label: "Lived Experience?", name: "lived_experience", widget: "boolean"}
+              # - {label: "Certifiable?", name: "certifiable", widget: "boolean"}
+  - name: "rapid-access"
+    label: "Rapid Access Lists"
+    label_singular: "Rapid Access List"
+    folder: "content/rapid-access"
+    create: true
+    sortable_fields: ["slug","title","updatedAt"]
+    summary: "{{title}}"
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Published?", name: "published", widget: "boolean", default: true}
+      - {label: "Publish Date", name: "createdAt", widget: "datetime", time_format: false, date_format: "DD/MM/YYYY"}
+      - {label: "Modified Date", name: "updatedAt", widget: "datetime", time_format: false, date_format: "DD/MM/YYYY"}
+      - {label: "Profile", name: "profile", widget: "markdown", required: false}
+      - {label: "Description", name: "body", widget: "markdown", required: false}
+      - {
+        label: "Primary Resources",
+        name: "primaryResources",
+        widget: "relation",
+        collection: "datasets",
+        file: "resources",
+        multiple: true,
+        search_fields: [
+          "items.*.title",
+          "items.*.id",
+          "items.*.url"
+        ],
+        value_field: "items.*.id",
+        display_fields: ["items.*.id","items.*.title"]
+      }
+      - {
+        label: "Additional Resource Sets",
+        name: "additionalResources",
+        widget: "list",
+        min: 0,
+        collapsed: false,
+        fields: [
+          {
+            label: "Title",
+            name: "title",
+            widget: "string"
+          },
+          {
+            label: "Description",
+            name: "description",
+            widget: "markdown", 
+            required: false
+          },
+          {
+            label: "Resource",
+            name: "resources",
+            widget: "relation",
+            collection: "datasets",
+            file: "resources",
+            multiple: true,
+            search_fields: [
+              "items.*.title",
+              "items.*.id"
+            ],
+            value_field: "items.*.id",
+            display_fields: ["items.*.id","items.*.title"]
+          }
+        ]
+      }
+      - {
+        label: "What is / definitions",
+        name: "definitions",
+        widget: "list",
+        min: 0,
+        collapsed: false,
+        fields: [
+          {
+            label: "Title",
+            name: "title",
+            widget: "string"
+          },
+          {
+            label: "Definition",
+            name: "definition",
+            widget: "markdown"
+          },
+          {
+            label: "URL",
+            name: "url",
+            widget: "string",
+            required: false
+          }
+        ]
+      }

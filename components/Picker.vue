@@ -1,111 +1,132 @@
 <template>
-  <div id="picker" class="nhsuk-fieldset">
-    <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="search">What are you looking for?</label>
-      <input
-        id="search"
-        v-model="indexFilter.text"
-        class="nhsuk-input nhsuk-u-width-full"
-        name="Search"
-        type="text"
-        placeholder="e.g. keywords, objectives, topics"
-      />
-      <p v-if="results > 0">
-        <strong class="nhsuk-tag nhsuk-tag--green">
-          <a href="#resources">Found {{ results }} resources</a>
-        </strong>
-      </p>
-    </div>
-    <div class="nhsuk-form-group" label="Staff Group">
-      <label class="nhsuk-label" for="staff">Staff Group</label>
-      <select
-        id="staff"
-        v-model="indexFilter.staff"
-        placeholder="Staff Group"
-        class="nhsuk-select nhsuk-u-width-full"
-      >
-        <option></option>
-        <option
-          v-for="staff in getStaff()"
-          :key="staff"
-          :label="staff"
-          :value="staff"
+  <div>
+    <div v-if="!viewingList" class="nhsuk-fieldset">
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="search"
+          >What are you looking for?</label
         >
-          {{ staff }}
-        </option>
-      </select>
-    </div>
-    <div class="nhsuk-form-group" label="Care Setting">
-      <label class="nhsuk-label" for="staff">Care Setting</label>
-      <select
-        id="staff"
-        v-model="indexFilter.caresetting"
-        placeholder="Care Setting"
-        class="nhsuk-select nhsuk-u-width-full"
-      >
-        <option></option>
-        <option
-          v-for="caresetting in getCareSettings()"
-          :key="caresetting"
-          :label="caresetting"
-          :value="caresetting"
+        <input
+          id="search"
+          v-model="indexFilter.text"
+          class="nhsuk-input nhsuk-u-width-full"
+          name="Search"
+          type="text"
+          placeholder="e.g. keywords, objectives, topics"
+        />
+        <p v-if="results > 0">
+          <strong class="nhsuk-tag nhsuk-tag--green">
+            <a href="#resources">Found {{ results }} resources</a>
+          </strong>
+        </p>
+      </div>
+      <div class="nhsuk-form-group" label="Staff Group">
+        <label class="nhsuk-label" for="staff">Staff Group</label>
+        <select
+          id="staff"
+          v-model="indexFilter.staff"
+          placeholder="Staff Group"
+          class="nhsuk-select nhsuk-u-width-full"
         >
-          {{ caresetting }}
-        </option>
-      </select>
-    </div>
-    <div class="nhsuk-form-group" label="Duration">
-      <label class="nhsuk-label" for="duration">
-        Maximum Duration (minutes)
-      </label>
-      <input
-        id="duration"
-        v-model="indexFilter.duration"
-        class="nhsuk-input nhsuk-u-width-one-quarter"
-        name="duration"
-        type="number"
-      />
-      <span
-        v-for="d in durationPresets"
-        :key="d"
-        class="nhsuk-tag nhsuk-tag--grey"
-      >
-        <a href="#" @click="setDuration(d)">
-          {{ d > 0 ? d : 'None' }}
-        </a>
-      </span>
-    </div>
-    <div class="nhsuk-form-group" label="Resource Type">
-      <fieldset class="nhsuk-fieldset">
-        <legend class="nhsuk-fieldset__legend">
-          <p class="nhsuk-fieldset__heading">Format</p>
-        </legend>
-        <div
-          class="nhsuk-checkboxes nhsuk-checkboxes--small ltlc-filter__formats"
-        >
-          <div
-            v-for="item in getFormats()"
-            :key="item"
-            class="nhsuk-checkboxes__item"
+          <option></option>
+          <option
+            v-for="staff in getStaff()"
+            :key="staff"
+            :label="staff"
+            :value="staff"
           >
-            <input
-              v-model="indexFilter.formats"
-              class="nhsuk-checkboxes__input"
-              type="checkbox"
-              :label="item"
-              :value="item"
-              :name="item"
-              checked="checked"
-            />
-            <label class="nhsuk-label nhsuk-checkboxes__label" :for="item">
-              {{ item }}
-            </label>
+            {{ staff }}
+          </option>
+        </select>
+      </div>
+      <div class="nhsuk-form-group" label="Care Setting">
+        <label class="nhsuk-label" for="staff">Care Setting</label>
+        <select
+          id="staff"
+          v-model="indexFilter.caresetting"
+          placeholder="Care Setting"
+          class="nhsuk-select nhsuk-u-width-full"
+        >
+          <option></option>
+          <option
+            v-for="caresetting in getCareSettings()"
+            :key="caresetting"
+            :label="caresetting"
+            :value="caresetting"
+          >
+            {{ caresetting }}
+          </option>
+        </select>
+      </div>
+      <div class="nhsuk-form-group" label="Duration">
+        <label class="nhsuk-label" for="duration">
+          Maximum Duration (minutes)
+        </label>
+        <input
+          id="duration"
+          v-model="indexFilter.duration"
+          class="nhsuk-input nhsuk-u-width-one-quarter"
+          name="duration"
+          type="number"
+        />
+        <span
+          v-for="d in durationPresets"
+          :key="d"
+          class="nhsuk-tag nhsuk-tag--grey"
+        >
+          <a href="#" @click="setDuration(d)">
+            {{ d > 0 ? d : 'None' }}
+          </a>
+        </span>
+      </div>
+      <div class="nhsuk-form-group" label="Resource Type">
+        <fieldset class="nhsuk-fieldset">
+          <legend class="nhsuk-fieldset__legend">
+            <p class="nhsuk-fieldset__heading">Format</p>
+          </legend>
+          <div
+            class="nhsuk-checkboxes nhsuk-checkboxes--small ltlc-filter__formats"
+          >
+            <div
+              v-for="item in getFormats()"
+              :key="item"
+              class="nhsuk-checkboxes__item"
+            >
+              <input
+                v-model="indexFilter.formats"
+                class="nhsuk-checkboxes__input"
+                type="checkbox"
+                :label="item"
+                :value="item"
+                :name="item"
+              />
+              <label class="nhsuk-label nhsuk-checkboxes__label" :for="item">
+                {{ item }}
+              </label>
+            </div>
           </div>
-        </div>
-      </fieldset>
+        </fieldset>
+      </div>
+      <div class="nhsuk-form-group">
+        <button class="nhsuk-button" @click="shareFilter">Share Filter</button>
+        <button
+          class="nhsuk-button nhsuk-button__secondary"
+          @click="clearFilters"
+        >
+          Clear Filters
+        </button>
+      </div>
+      <hr />
     </div>
-    <div class="nhsuk-form-group">
-      <button class="nhsuk-button" @click="clearFilters">Clear Filters</button>
+    <div v-else>
+      <p>
+        You are currently viewing a custom curated list of resources, so the
+        filter options are disabled.
+      </p>
+      <div class="nhsuk-form-group">
+        <button class="nhsuk-button nhsuk-button__secondary" @click="hideList">
+          Return to filters
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -117,16 +138,12 @@ import { IResource, IFilter } from '~/interfaces'
 @Component
 export default class Picker extends Vue {
   @Prop({ required: true }) readonly resources!: IResource[]
+  @Prop({ required: true }) readonly filter!: IFilter[]
+  @Prop() readonly viewingList!: boolean
   results = 0
   status = ''
 
-  indexFilter: IFilter = {
-    text: '',
-    duration: 0,
-    formats: this.getFormats(),
-    caresetting: '',
-    staff: '',
-  }
+  indexFilter: IFilter = JSON.parse(JSON.stringify(this.filter))
 
   searchWeighting = {
     title: 10,
@@ -153,6 +170,10 @@ export default class Picker extends Vue {
     })
   }
 
+  hideList() {
+    this.$emit('update:viewing-list', false)
+  }
+
   getFormats() {
     return [...new Set(this.resources.map((resource) => resource.format))]
       .filter((a) => a)
@@ -173,54 +194,86 @@ export default class Picker extends Vue {
       .sort()
   }
 
+  clearFilters() {
+    this.$emit('clearFilters')
+  }
+
+  shareFilter() {
+    this.$emit('update:is-sharing-filter', true)
+    this.$emit('update:share-modal', true)
+  }
+
   textToArray(text: string) {
     return text.toLowerCase().split(' ')
   }
 
   getLinks() {
+    this.$emit('update:filter', this.indexFilter)
+
     const ranked = this.resources
       .map((r) => {
         let points = 0
-        const textArr = this.indexFilter.text.toLowerCase().split(' ')
 
-        const wordsMatched = r.title
-          .toLowerCase()
-          .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
-          .split(' ')
-          .filter((w) => {
-            return textArr.includes(w)
-          }).length
+        if (this.indexFilter.text.trim().length > 0) {
+          const textArr = this.indexFilter.text
+            .trim()
+            .toLowerCase()
+            .split(' ')
+            .filter((w) => w !== '' && w !== ' ')
 
-        points += wordsMatched * this.searchWeighting.title
+          const wordsMatched = r.title
+            .toLowerCase()
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+            .split(' ')
+            .filter((w) => {
+              return w !== '' && textArr.includes(w)
+            }).length
 
-        const keywordsMatched = r.keywords
-          .join(' ')
-          .toLowerCase()
-          .split(' ')
-          .filter((w) => {
-            return textArr.includes(w)
-          }).length
+          points += wordsMatched * this.searchWeighting.title
 
-        points += keywordsMatched * this.searchWeighting.keyword
+          const keywordsMatched = r.keywords
+            .join(' ')
+            .toLowerCase()
+            .split(' ')
+            .filter((w) => {
+              return textArr.includes(w)
+            }).length
 
-        const partialMatched = r.search
-          .toLowerCase()
-          .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
-          .split(' ')
-          .filter((w) => {
-            return textArr.every((v) => w.includes(v))
-          }).length
+          points += keywordsMatched * this.searchWeighting.keyword
 
-        points += partialMatched * this.searchWeighting.description
+          const partialMatched = r.search
+            .toLowerCase()
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+            .split(' ')
+            .filter((w) => {
+              return textArr.every((v) => w.includes(v))
+            }).length
+
+          points += partialMatched * this.searchWeighting.description
+        } else {
+          points += 1
+        }
 
         return { ...r, points }
       })
       .filter((resource) => {
         return resource.points > 0
       })
-      .sort((a, b) => b.points - a.points)
+      .sort(
+        (a, b) =>
+          b.points - a.points ||
+          Date.parse(b.upload_date.toString()) -
+            Date.parse(a.upload_date.toString())
+      )
 
-    let resource = ranked
+    let resource = this.resources
+      .filter((r) => ranked.map((m) => m.id).includes(r.id))
+      .sort((a, b) => {
+        return (
+          ranked.findIndex((ranked) => a.id === ranked.id) -
+          ranked.findIndex((ranked) => b.id === ranked.id)
+        )
+      })
 
     if (this.indexFilter.staff !== '') {
       resource = resource.filter((resource) => {
@@ -265,18 +318,6 @@ export default class Picker extends Vue {
   getFilter() {
     const currentFilter = this.indexFilter
     return currentFilter
-  }
-
-  // clear all filters
-  clearFilters() {
-    this.indexFilter = {
-      text: '',
-      duration: 0,
-      formats: this.getFormats(),
-      caresetting: '',
-      staff: '',
-    }
-    this.results = 0
   }
 
   changeFilterDescription() {
@@ -338,6 +379,11 @@ export default class Picker extends Vue {
     this.results = 0
     this.$emit('changeModel', this.getLinks())
   }
+
+  @Watch('filter')
+  onFilterUpdated() {
+    this.indexFilter = Object.assign(this.indexFilter, this.filter)
+  }
 }
 </script>
 
@@ -361,5 +407,9 @@ export default class Picker extends Vue {
 
 .nhsuk-tag {
   margin-right: 2px;
+}
+
+.nhsuk-fieldset__legend .nhsuk-fieldset__heading {
+  font-weight: 600;
 }
 </style>

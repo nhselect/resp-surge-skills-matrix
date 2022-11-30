@@ -22,14 +22,15 @@
     }
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.1.1",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/vue-fontawesome": "^2.0.6",
+    "@fortawesome/fontawesome-svg-core": "6.1.0",
+    "@fortawesome/free-solid-svg-icons": "6.1.0",
+    "@fortawesome/vue-fontawesome": "^2.0.8",
     "@nuxt/content": "^1.14.0",
     "core-js": "^3.9.1",
     "nhsuk-frontend": "^6.1.0",
     "nuxt": "^2.15.3",
-    "nuxt-property-decorator": "^2.9.1"
+    "nuxt-property-decorator": "^2.9.1",
+    "qrcode.vue": "1.7.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",
@@ -48,11 +49,11 @@
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.7.0",
-    "husky": "^8.0.1",
+    "husky": "^4.3.8",
     "lint-staged": "^10.5.4",
     "node-sass": "^6.0.1",
     "prettier": "^2.2.1",
-    "sass": "^1.51.0",
+    "sass": "~1.32.6",
     "sass-loader": "10.1.1",
     "stylelint": "^13.12.0",
     "stylelint-config-prettier": "^8.0.2",
