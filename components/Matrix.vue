@@ -25,7 +25,6 @@
         :share-title.sync="shareTitle"
         :is-sharing-filter.sync="isSharingFilter"
         :editing-list.sync="editingList"
-        :resources="resources"
       />
       <div id="resources" class="ltlc-resources">
         <div class="">
