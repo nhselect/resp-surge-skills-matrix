@@ -21,7 +21,7 @@
           <figure class="nhsuk-image">
             <QrcodeVue
               :value="shareUrl"
-              size="300"
+              size="160"
               render-as="canvas"
               class="nhsuk-image__img"
             />
@@ -108,6 +108,10 @@ export default class ShareModal extends Vue {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
     transition: all 0.3s ease;
     margin: 0 auto;
+  }
+
+  figure.nhsuk-image {
+    display: flex;
   }
 }
 </style>
