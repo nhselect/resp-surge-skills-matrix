@@ -214,7 +214,7 @@ export default class Matrix extends Vue {
     } else {
       string = this.setListUrl()
     }
-    const url = window.location.href.split('?')[0].replace('#', '')
+    const url = window.location.href.split('#')[0].split('?')[0]
     return url + string
   }
 
