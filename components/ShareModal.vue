@@ -30,7 +30,9 @@
               choosing 'Save image as'
             </figcaption>
           </figure>
-          <button class="nhsuk-button" @click="closeModal">Close</button>
+          <button class="nhsuk-button close-button" @click="closeModal">
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -112,6 +114,12 @@ export default class ShareModal extends Vue {
 
   figure.nhsuk-image {
     display: flex;
+  }
+
+  .close-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
   }
 }
 </style>
